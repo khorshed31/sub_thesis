@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="content-page">
+    <div class="content">
+        <!-- Start Content-->
+        <!-- Start Content-->
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box">                                    
+                        
+                        <h4 class="page-title">Home</h4>
+                    </div>
+                </div>
+            </div>
+
+            {% if user.is_authenticated %}
+                {% for myuser in userData %}
+                    <p> {{ user.email }}</p>
+                {% endfor %}
+            {%else%}
+                Please signin first.
+            {%endif%}
+
+            <div class="row">
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card">
+                        <img src="/static/assets/images/e1.jpg" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title"><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#login-modal"
+                                 class="text-success stretched-link">PHYSIOTHERAPY EXERCISES 1</a></h5>
+                            <p class="card-text">
+                                Some quick example text to build on the card up the bulk of the card's content.
+                            </p>
+                        </div> <!-- end card-body -->
+                    </div> <!-- end card -->
+                </div>
+
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card">
+                        <img src="/static/assets/images/e1.jpg" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title"><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#login-modal"
+                                 class="text-success stretched-link">PHYSIOTHERAPY EXERCISES 2</a></h5>
+                            <p class="card-text">
+                                Some quick example text to build on the card up the bulk of the card's content.
+                            </p>
+                        </div> <!-- end card-body -->
+                    </div> <!-- end card -->
+                </div>
+
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card">
+                        <img src="/static/assets/images/e1.jpg" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title"><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#login-modal"
+                                 class="text-success stretched-link">PHYSIOTHERAPY EXERCISES 3</a></h5>
+                            <p class="card-text">
+                                Some quick example text to build on the card up the bulk of the card's content.
+                            </p>
+                        </div> <!-- end card-body -->
+                    </div> <!-- end card -->
+                </div>
+
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card">
+                        <img src="/static/assets/images/e1.jpg" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title"><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#login-modal"
+                                 class="text-success stretched-link">PHYSIOTHERAPY EXERCISES 4</a></h5>
+                            <p class="card-text">
+                                Some quick example text to build on the card up the bulk of the card's content.
+                            </p>
+                        </div> <!-- end card-body -->
+                    </div> <!-- end card -->
+                </div>
+
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card">
+                        <img src="/static/assets/images/e1.jpg" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title"><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#login-modal"
+                                 class="text-success stretched-link">PHYSIOTHERAPY EXERCISES 5</a></h5>
+                            <p class="card-text">
+                                Some quick example text to build on the card up the bulk of the card's content.
+                            </p>
+                        </div> <!-- end card-body -->
+                    </div> <!-- end card -->
+                </div>
+
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card">
+                        <img src="/static/assets/images/e1.jpg" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title"><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#login-modal"
+                                 class="text-success stretched-link">PHYSIOTHERAPY EXERCISES 6</a></h5>
+                            <p class="card-text">
+                                Some quick example text to build on the card up the bulk of the card's content.
+                            </p>
+                        </div> <!-- end card-body -->
+                    </div> <!-- end card -->
+                </div>
+
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card">
+                        <img src="/static/assets/images/e1.jpg" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title"><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#login-modal"
+                                 class="text-success stretched-link">PHYSIOTHERAPY EXERCISES 7</a></h5>
+                            <p class="card-text">
+                                Some quick example text to build on the card up the bulk of the card's content.
+                            </p>
+                        </div> <!-- end card-body -->
+                    </div> <!-- end card -->
+                </div>
+
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card">
+                        <img src="/static/assets/images/e1.jpg" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title"><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#login-modal"
+                                 class="text-success stretched-link">PHYSIOTHERAPY EXERCISES 8</a></h5>
+                            <p class="card-text">
+                                Some quick example text to build on the card up the bulk of the card's content.
+                            </p>
+                        </div> <!-- end card-body -->
+                    </div> <!-- end card -->
+                </div>
+
+            </div>
+
+
+
+            <div id="login-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="multiple-oneModalLabel">EXERCISES NAME</h4>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+            
+                            <form action="web_cam.html" class="ps-3 pe-3">
+            
+                                <div class="mb-3">
+                                    <label for="emailaddress1" class="form-label">Time Duration</label>
+                                    <input class="form-control" type="number" id="emailaddress1" required="" placeholder="Type Minutes">
+                                </div>
+            
+                                <div class="mb-3 text-center">
+                                    <a href="/web_cam" class="btn rounded-pill btn-primary">Start</a>
+                                    <!-- <button class="btn rounded-pill btn-primary" type="submit">Start</button> -->
+                                </div>
+            
+                            </form>
+            
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+            
+                                         
+            
+
+        </div>
+        <!-- container -->
+
+    </div>
+    <!-- content -->
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+        <meta charset="utf-8" />
+        <title>Log In </title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
+        <meta content="Coderthemes" name="author" />
+
+        <!-- App favicon -->
+        <link rel="shortcut icon" href="/static/assets/images/favicon.ico">
+        
+        <!-- Theme Config Js -->
+        <script src="/static/assets/js/hyper-config.js"></script>
+
+        <!-- App css -->
+        <link href="/static/assets/css/app-saas.min.css" rel="stylesheet" type="text/css" id="app-style" />
+
+        <!-- Icons css -->
+        <link href="/static/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+    </head>
+    
+    <body class="authentication-bg">
+        <div class="account-pages pt-2 pt-sm-5 pb-4 pb-sm-5">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-xxl-4 col-lg-5">
+                        <div class="card">
+
+                            <!-- Logo -->
+                            <div class="card-header pt-4 pb-4 text-center bg-primary">
+                                <a href="index.html">
+                                    <!-- <span><img src="assets/images/logo.png" alt="logo" height="22"></span> -->
+                                    <span class="text-light">PHYSIOTHERAPY</span>
+                                </a>
+                            </div>
+
+                            <div class="card-body p-4">
+
+                                {% for message in messages %}
+                                    <div class="alert {{ message.tags }}" >
+                                        <span aria-hidden="true">&times;</span>
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                                
+                                <div class="text-center w-75 m-auto">
+                                    <h4 class="text-dark-50 text-center pb-0 fw-bold">Sign In</h4>
+                                </div>
+
+                                <form action="" method="post">
+                                    {% csrf_token %}
+
+                                    <div class="mb-3">
+                                        <label for="emailaddress" class="form-label">Username</label>
+                                        <input class="form-control" type="text" id="emailaddress" name="username"
+                                        value="" required="" placeholder="Enter your username">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <!--<a href="#" class="text-muted float-end"><small>Forgot your password?</small></a>-->
+                                        <label for="password" class="form-label">Password</label>
+                                        <div class="input-group input-group-merge">
+                                            <input type="password" id="password" class="form-control" name="password"
+                                             placeholder="Enter your password">
+                                            <div class="input-group-text" data-password="false">
+                                                <span class="password-eye"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- <div class="mb-3 mb-3">
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" id="checkbox-signin" checked>
+                                            <label class="form-check-label" for="checkbox-signin">Remember me</label>
+                                        </div>
+                                    </div> -->
+
+                                    <div class="mb-3 mb-0 text-center">
+                                        <!-- <a href="/home" class="btn btn-primary"> Log In </a> -->
+                                        <button class="btn btn-primary" type="submit"> Log In </button>
+                                    </div>
+
+                                </form>
+                            </div> <!-- end card-body -->
+                        </div>
+                        <!-- end card -->
+
+                        <div class="row mt-3">
+                            <div class="col-12 text-center">
+                                <p class="text-muted">Don't have an account? <a href="{% url 'signup' %}" class="text-muted ms-1"><b>Sign Up</b></a></p>
+                            </div> <!-- end col -->
+                        </div>
+                        <!-- end row -->
+
+                    </div> <!-- end col -->
+                </div>
+                <!-- end row -->
+            </div>
+            <!-- end container -->
+        </div>
+        <!-- end page -->
+
+        <footer class="footer footer-alt">
+            <script>document.write(new Date().getFullYear())</script> © SUB
+        </footer>
+        <!-- Vendor js -->
+        <script src="/static/assets/js/vendor.min.js"></script>
+        
+        <!-- App js -->
+        <script src="/static/assets/js/app.min.js"></script>
+
+    </body>
+
+</html>

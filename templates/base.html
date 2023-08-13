@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        {% include "header/header.html" %}
+
+        {% block css %}
+
+        {% endblock %}
+    </head>
+
+    <body>
+        <!-- Begin page -->
+        <div class="wrapper">
+
+            
+            <!-- ========== Topbar Start ========== -->
+            {% include "sidebar/topbar.html" %}
+            <!-- ========== Topbar End ========== -->
+
+            <!-- ========== Left Sidebar Start ========== -->
+            {% include "sidebar/sidebar.html" %}
+            <!-- ========== Left Sidebar End ========== -->
+
+            <!-- ============================================================== -->
+            <!-- Start Page Content here -->
+            <!-- ============================================================== -->
+
+            {% block content %}
+
+            {% endblock %}
+
+            <!-- ============================================================== -->
+            <!-- End Page content -->
+            <!-- ============================================================== -->
+
+
+            {% include "footer/footer.html" %}
+
+        </div>
+        <!-- END wrapper -->       
+        
+        {% include "footer/js_file.html" %}
+
+        {% block js %}
+
+        {% endblock %}
+
+    </body>
+
+
+</html> 

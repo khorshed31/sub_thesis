@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block css %}
+
+    <style>
+        video{
+        max-width: 600px;
+        height: auto;
+        border: 5px solid black;
+        }
+    </style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="content-page">
+    <div class="content">
+
+        <!-- Start Content-->
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box">                                    
+                        
+                        <h4 class="page-title">Web Cam</h4>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div>
+                    <video height="100%" width="100%" autoplay></video>
+                  
+                    <div class="buttons">
+                      <button href="#!" class="btn btn-success" onclick="startWebCam()">Start</button>
+                      <button href="#!" class="btn btn-warning" onclick="StopWebCam()">Stop</button>
+                    </div>
+              
+                  </div>
+            </div>
+            <a href="/report" class="btn btn-primary my-4"> Show Result </a>
+        </div>
+        <!-- container -->
+
+    </div>
+    <!-- content -->
+
+    <!-- Footer Start -->
+    <footer class="footer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    <script>document.write(new Date().getFullYear())</script> © SUB
+                </div>
+                <div class="col-md-6">
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- end Footer -->
+
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+    <script>
+        const video = document.querySelector('video');
+        
+        const startWebCam = () =>{
+        if (navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => video.srcObject = stream).catch(error => console.log(error));
+        }
+        }
+        startWebCam();
+        
+        const StopWebCam = ()=>{
+        let stream = video.srcObject;
+        let tracks = stream.getTracks();
+        tracks.forEach(track => track.stop());
+        video.srcObject = null;
+        }
+
+    </script>
+
+{% endblock %}
+
