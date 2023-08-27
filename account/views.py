@@ -48,8 +48,3 @@ def signout(request):
     logout(request)
     messages.success(request, 'Successfully Logout!!.')
     return redirect('signin')
-'''
-def recovery(request):
-    return render(request,'Account/recovery.html')
-
-'''

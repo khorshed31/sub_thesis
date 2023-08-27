@@ -3,5 +3,5 @@ from .import views
 
 urlpatterns = [
     path('',views.home,name="home"),
-    path('createcourse',views.createCourse,name='createcourse')
+    path('web_cam', views.web_cam, name="web_cam"),
 ]

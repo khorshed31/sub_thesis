@@ -17,13 +17,13 @@
                 </div>
             </div>
 
-            {% if user.is_authenticated %}
+            {% comment %} {% if user.is_authenticated %}
                 {% for myuser in userData %}
                     <p> {{ user.email }}</p>
                 {% endfor %}
             {%else%}
                 Please signin first.
-            {%endif%}
+            {%endif%} {% endcomment %}
 
             <div class="row">
                 <div class="col-sm-6 col-lg-3">
@@ -143,7 +143,7 @@
                         </div>
                         <div class="modal-body">
             
-                            <form action="web_cam.html" class="ps-3 pe-3">
+                            <form action="" class="ps-3 pe-3">
             
                                 <div class="mb-3">
                                     <label for="emailaddress1" class="form-label">Time Duration</label>
@@ -151,7 +151,7 @@
                                 </div>
             
                                 <div class="mb-3 text-center">
-                                    <a href="/web_cam" class="btn rounded-pill btn-primary">Start</a>
+                                    <a href="{% url 'web_cam' %}" class="btn rounded-pill btn-primary">Start</a>
                                     <!-- <button class="btn rounded-pill btn-primary" type="submit">Start</button> -->
                                 </div>
             

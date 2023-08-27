@@ -26,3 +26,6 @@ def createCourse(request):
 
     return render(request,'home/createcourse.html')
 
+def web_cam(request):
+    return render(request,'web_cam.html')
+
