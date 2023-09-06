@@ -27,5 +27,15 @@ def createCourse(request):
     return render(request,'home/createcourse.html')
 
 def web_cam(request):
-    return render(request,'web_cam.html')
+    therapy_name = request.GET.get('therapy_name', '')
+    time = request.GET.get('time', '')
+
+    context = {
+        'therapy_name': therapy_name,
+        'time': time,
+    }
+
+    return render(request,'web_cam.html', context)
+
+
 

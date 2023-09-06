@@ -27,7 +27,8 @@
 
             <div class="row">
                 <div class="col-sm-6 col-lg-3">
-                    <div class="card">
+                    <div class="card" id="e1">
+                        <span hidden>e1</span>
                         <img src="/static/assets/images/e1.jpg" class="card-img-top" alt="...">
                         <div class="card-body">
                             <h5 class="card-title"><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#login-modal"
@@ -143,16 +144,18 @@
                         </div>
                         <div class="modal-body">
             
-                            <form action="" class="ps-3 pe-3">
+                            <form action="{% url 'web_cam' %}" method="GET" class="ps-3 pe-3">
             
                                 <div class="mb-3">
                                     <label for="emailaddress1" class="form-label">Time Duration</label>
-                                    <input class="form-control" type="number" id="emailaddress1" required="" placeholder="Type Minutes">
+                                    <input class="form-control" type="text" name="time" id="emailaddress1"
+                                     required="" placeholder="Type Minutes">
+                                    <input class="form-control" type="hidden" name="therapy_name" id='therapy_name' value="">
                                 </div>
             
                                 <div class="mb-3 text-center">
-                                    <a href="{% url 'web_cam' %}" class="btn rounded-pill btn-primary">Start</a>
-                                    <!-- <button class="btn rounded-pill btn-primary" type="submit">Start</button> -->
+                                    {% comment %} <a href="{% url 'web_cam' %}" class="btn rounded-pill btn-primary">Start</a> {% endcomment %}
+                                     <button class="btn rounded-pill btn-primary" type="submit">Start</button>
                                 </div>
             
                             </form>
@@ -172,5 +175,24 @@
     <!-- content -->
 
 </div>
+
+{% endblock %}
+
+{% block js %}
+
+    <script>
+        
+        $(document).ready(function() {
+            // Add a click event listener to the card
+            $('#e1').click(function() {
+                // Get the card title text
+                var cardTitle = $(this).find('span').text();
+                
+                // Set the hidden input value
+                $('#therapy_name').val(cardTitle);
+            });
+        });
+
+    </script>
 
 {% endblock %}
