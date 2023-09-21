@@ -64,13 +64,9 @@
                     </span>
                     <span>
                         <span class="account-user-name">
-                            {% if user.is_authenticated %}
-                                {% for myuser in userData %}
-                                    {{ user.first_name }} {{ user.last_name }}
-                                {% endfor %}
-                            {%else%}
-                                
-                            {%endif%}
+                            {% if user_info %}
+                            {{ user_info.first_name }} {{ user_info.last_name }}
+                            {% endif %}
                         </span>
                         <span class="account-position">User</span>
                     </span>

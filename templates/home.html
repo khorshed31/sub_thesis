@@ -16,14 +16,14 @@
                     </div>
                 </div>
             </div>
-
-            {% comment %} {% if user.is_authenticated %}
-                {% for myuser in userData %}
-                    <p> {{ user.email }}</p>
-                {% endfor %}
-            {%else%}
-                Please signin first.
-            {%endif%} {% endcomment %}
+{% comment %} 
+            {% if user_info %}
+        <p>Welcome, {{ user_info.username }}!</p>
+        <p>Email: {{ user_info.email }}</p>
+    
+    {% else %}
+        <p>Welcome to the Home Page. Please <a href="{% url 'login' %}">log in</a>.</p>
+    {% endif %} {% endcomment %}
 
             <div class="row">
                 <div class="col-sm-6 col-lg-3">

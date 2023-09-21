@@ -28,6 +28,15 @@
                     </div>
                 </div>
             </div>
+
+            {% comment %} <h1>Upload a Video</h1>
+            <form id="upload-form" enctype="multipart/form-data">
+                <input type="hidden" name="title" value="{{ therapy_name }}" required>
+                <input type="file" name="video" accept="video/*" required>
+                <button type="submit">Upload</button>
+            </form> {% endcomment %}
+            <div id="message"></div>
+
             
             <div class="row">
                 <div class="container">
@@ -74,6 +83,8 @@
             const recordedVideoElement = document.getElementById('recordedVideo');
             const recordDurationInput = document.getElementById('recordDuration');
             const timerElement = document.getElementById('timer');
+            var physiotherapyType = (new URLSearchParams(window.location.search)).get('therapy_name');
+
             let mediaRecorder;
             let recordedChunks = [];
             let recordingTimer;
@@ -83,7 +94,8 @@
                 const seconds = ((remainingTime % 60000) / 1000).toFixed(0);
                 timerElement.innerHTML = `<span class="badge bg-success rounded-pill">${minutes}:${(seconds < 10 ? '0' : '')}${seconds}</span>`;
             }
-        
+
+
             async function startRecording() {
                 try {
                     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -99,7 +111,25 @@
                     mediaRecorder.onstop = function () {
                         const blob = new Blob(recordedChunks, { type: 'video/webm' });
                         recordedChunks = [];
+                        const formData = new FormData();
+                        formData.append('video', blob, 'recorded_video.webm');
+
+                        // Send the recorded video to the Django backend
+                        fetch('upload_video', {
+                            method: 'POST',
+                            body: formData,
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(data.message);
+                        })
+                        .catch(error => {
+                            console.error('Error uploading video:', error);
+                        });
                         recordedVideoElement.src = URL.createObjectURL(blob);
+
+
+                        
                     };
         
                     const minutes = parseInt(recordDurationInput.value, 10);
@@ -141,6 +171,34 @@
         
 
     </script>
+
+    {% comment %} <script>
+        document.getElementById('upload-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            var formData = new FormData(this);
+
+            fetch('upload_video', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('message').innerHTML = data.message;
+            })
+            .catch(error => {
+                console.error(error);
+                document.getElementById('message').innerHTML = 'An error occurred while uploading the video.';
+            });
+        });
+    </script> {% endcomment %}
+
+
+
+
+
+
+
 
 {% endblock %}
 
