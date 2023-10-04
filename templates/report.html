@@ -25,38 +25,21 @@
                 <h3>Exercise Report</h3>
               </div>
               <div class="card-body">
-                <h2 class="card-title text-info">Shahariar Hamid</h2>
-                <h3 class="card-text mx-3 text-warning">User ID: 10000007</h3>
+                <h2 class="card-title text-info">{{ user_info.first_name }} {{ user_info.last_name }}</h2>
+                <h3 class="card-text mx-3 text-warning">Email: {{ user_info.email }}</h3>
                 <div class="row mx-5">
                   <div class="table-responsive">
                       <table class="table table-hover table-sm">
                           <thead class="table table-dark">
                             <tr>
-                              <th scope="col">Exercise Id</th>
-                              <th scope="col">Exercise name</th>
-                              <th scope="col">Accuracy</th>
+                              <th scope="col">Exercise Name</th>
+                              <th scope="col">Result</th>
                             </tr>
                           </thead>
                           <tbody class="table-group-divider">
                             <tr>
-                              <th scope="row">1</th>
-                              <td>Mark</td>
-                              <td>9</td>
-                            </tr>
-                            <tr>
-                              <th scope="row">2</th>
-                              <td>Jacob</td>
-                              <td>5</td>
-                            </tr>
-                            <tr>
-                              <th scope="row">3</th>
-                              <td>Mark</td>
-                              <td>9</td>
-                            </tr>
-                            <tr>
-                              <th scope="row">4</th>
-                              <td>Jacob</td>
-                              <td>5</td>
+                              <th scope="row">{{ therapy_name }}</th>
+                              <td>{{ analysis_result }}</td>
                             </tr>
                           </tbody>
                         </table>
@@ -65,8 +48,9 @@
               </div>
               </div>
               <div class="card-footer text-muted bg-light">
-                <i>Date: 28-07-2023</i>
+                <i>Date: <span id="currentDate"></span></i>
               </div>
+              <button onclick="goBack()">Go Back</button>
             </div>
 
         </div>
@@ -78,6 +62,19 @@
     {% include "footer/js_file.html" %}
 
 </div>
+
+{% endblock %}
+
+{% block js %}
+
+<script>
+  var currentDate = new Date().toLocaleDateString('en-GB');
+  document.getElementById('currentDate').textContent = currentDate;
+
+  function goBack() {
+    window.history.back();
+}
+</script>
 
 {% endblock %}
 

@@ -29,16 +29,16 @@
                 </div>
             </div>
 
-            {% comment %} <h1>Upload a Video</h1>
-            <form id="upload-form" enctype="multipart/form-data">
-                <input type="hidden" name="title" value="{{ therapy_name }}" required>
-                <input type="file" name="video" accept="video/*" required>
-                <button type="submit">Upload</button>
-            </form> {% endcomment %}
-            <div id="message"></div>
+            <h1>Upload and Process Video</h1>
+            <input type="file" id="videoInput" accept="video/*">
+            <button id="uploadButton">Upload and Process</button>
+            <div id="loader" style="display: none;">
+                <i class="fas fa-spinner fa-spin"></i> Processing...
+            </div>
+            <a href="{% url 'results_page' %}" id="viewResultsLink" style="display: none;">View Results</a>
 
             
-            <div class="row">
+            {% comment %} <div class="row">
                 <div class="container">
                     <div id="timer"><span class="badge bg-success rounded-pill">00:00</span></div>
                     <br><video id="video" autoplay playsinline></video><br>
@@ -48,7 +48,11 @@
                 </div><br>
                 <video id="recordedVideo" controls></video>
             </div>
-            <a href="/report" class="btn btn-primary my-4"> Show Result </a>
+            <div id="resultSection">
+                <h2>Model Result</h2>
+                <p id="resultText">Waiting for result...</p>
+            </div>
+            <a href="/report" class="btn btn-primary my-4"> Show Result </a> {% endcomment %}
         </div>
         <!-- container -->
 
@@ -75,7 +79,7 @@
 
 {% block js %}
 
-    <script>
+    {% comment %} <script>
         document.addEventListener('DOMContentLoaded', function () {
             const videoElement = document.getElementById('video');
             const startRecordingButton = document.getElementById('startRecording');
@@ -84,6 +88,9 @@
             const recordDurationInput = document.getElementById('recordDuration');
             const timerElement = document.getElementById('timer');
             var physiotherapyType = (new URLSearchParams(window.location.search)).get('therapy_name');
+
+            const resultSection = document.getElementById('resultSection');
+            const resultText = document.getElementById('resultText');
 
             let mediaRecorder;
             let recordedChunks = [];
@@ -122,6 +129,10 @@
                         .then(response => response.json())
                         .then(data => {
                             console.log(data.message);
+
+                            // Update the result section with the model's output
+                            resultText.textContent = `Model Result: ${data.result}`;
+                            resultSection.style.display = 'block';
                         })
                         .catch(error => {
                             console.error('Error uploading video:', error);
@@ -170,28 +181,56 @@
         
         
 
-    </script>
-
-    {% comment %} <script>
-        document.getElementById('upload-form').addEventListener('submit', function (event) {
-            event.preventDefault();
-
-            var formData = new FormData(this);
-
-            fetch('upload_video', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('message').innerHTML = data.message;
-            })
-            .catch(error => {
-                console.error(error);
-                document.getElementById('message').innerHTML = 'An error occurred while uploading the video.';
-            });
-        });
     </script> {% endcomment %}
+
+    <script>
+        // Get references to HTML elements
+        const videoInput = document.getElementById('videoInput');
+        const uploadButton = document.getElementById('uploadButton');
+        const recordedVideoElement = document.getElementById('recordedVideo');
+        const predictionsList = document.getElementById('predictionsList');
+        const resultsContainer = document.getElementById('analysis-results');
+        const therapy_name = `{{ therapy_name }}`
+        const viewResultsLink = document.getElementById('viewResultsLink');
+        const loader = document.getElementById('loader');
+
+        // Event listener for the Upload and Process button
+        uploadButton.addEventListener('click', () => {
+            const uploadedFile = videoInput.files[0];
+            
+            if (uploadedFile) {
+                const formData = new FormData();
+                formData.append('video', uploadedFile);
+                formData.append('therapy_name', therapy_name);
+
+                // Show the preloader
+                loader.style.display = 'block'; // Show the preloader
+                //console.log(therapy_name)
+                // Send the uploaded video to the backend for processing
+                fetch('upload_video', {
+                    method: 'POST',
+                    body: formData,
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Handle the analysis results
+                    if ('result' in data) {
+                        // Hide the preloader
+                        loader.style.display = 'none';
+                        //resultsContainer.textContent = `Analysis Result: ${data.result}`;
+                        viewResultsLink.style.display = 'block';
+                    } else if ('error' in data) {
+                        loader.style.display = 'none';
+                        resultsContainer.textContent = `Error: ${data.error}`;
+                    }
+                })
+                .catch(error => {
+                    loader.style.display = 'none';
+                    console.log(error);
+                });
+            }
+        });
+    </script>
 
 
 
