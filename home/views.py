@@ -74,11 +74,14 @@ exercise_to_model_mapping = {
 def load_pretrained_model(model_path):
     try:
         model = tf.keras.models.load_model(model_path)
-        return model
+        # Serialize the model's architecture and weights
+        model_config = model.to_json()
+        model_weights = model.get_weights()
+        return model_config, model_weights
     except Exception as e:
         # Handle any exceptions that may occur during model loading
         print(f"Error loading the model: {str(e)}")
-        return None    
+        return None, None 
 
 # Load the pre-trained model
 # model = load_pretrained_model('home/physiotherapy_models/e1.h5')    
@@ -105,126 +108,81 @@ def upload_video(request):
         media_root = settings.MEDIA_ROOT
         video_file_path = os.path.join(media_root, filename)
         if video_file_path:
-            # Process the video with the pre-trained model
+
+            # Inside your upload_video function
             analysis_result = process_video(video_file_path, therapy_name)
-            # Store the analysis result in the session
-            request.session['analysis_result'] = analysis_result
-            request.session['therapy_name'] = therapy_name
-            # Return the analysis result as JSON
-            return JsonResponse({'result': analysis_result})
-            # return redirect('results_page')
-        else:
-            return JsonResponse({'error': 'No video file uploaded.'})
+
+            
+
+            if 'error' in analysis_result:
+                return JsonResponse({'error': analysis_result['error']}, status=500)
+            else:
+                # Format the predicted score with two decimal places
+                formatted_score = '{:.2f}'.format(analysis_result['predicted_score'][0][0])
+                # Store the analysis result in the session
+                request.session['analysis_result'] = formatted_score
+                request.session['therapy_name'] = therapy_name
+
+                return JsonResponse({'result': formatted_score})
 
     return JsonResponse({'message': 'Invalid request'}, status=400)
 
 def process_video(video_file, exercise_type):
-    sequence_frames = []  # Collect frames for a sequence
     sequence_length = 35  # Define the desired sequence length
-    highest_probability_class = None
-
     # Load the selected model based on the exercise type
     model_path = exercise_to_model_mapping.get(exercise_type)
 
-    if model_path:
-        selected_model = load_pretrained_model(model_path)
+    # Initialize the VideoCapture object to read from the video file.
+    video_reader = cv2.VideoCapture(video_file)
 
-        if selected_model:
-            sequence_frames = []  # Collect frames for a sequence
-            sequence_length = 35  # Define the desired sequence length
-            highest_probability_class = None
+    # Declare a list to store video frames we will extract.
+    frames_list = []
 
-            cap = cv2.VideoCapture(video_file)
+    # Get the number of frames in the video.
+    video_frames_count = int(video_reader.get(cv2.CAP_PROP_FRAME_COUNT))
 
-            while True:
-                ret, frame = cap.read()
-                if not ret:
-                    break
+    # Calculate the interval after which frames will be added to the list.
+    skip_frames_window = max(int(video_frames_count / sequence_length), 1)
 
-                # Preprocess the frame
-                processed_frame = preprocess_frame(frame)
+    # Iterating through frames.
+    for frame_counter in range(sequence_length):
 
-                # Append the preprocessed frame to the sequence
-                sequence_frames.append(processed_frame)
+        # Set the current frame position of the video.
+        video_reader.set(cv2.CAP_PROP_POS_FRAMES, frame_counter * skip_frames_window)
 
-                # If we have collected enough frames for a sequence, process it
-                if len(sequence_frames) == sequence_length:
-                    sequence_result, highest_probability_class = process_sequence(sequence_frames, selected_model)
-                    break  # Exit the loop after processing the first sequence
+        # Read a frame.
+        success, frame = video_reader.read()
 
-            cap.release()
+        # Check if the frame is not read properly, then break the loop.
+        if not success:
+            break
 
-            # Delete the video file once processing is complete
-            os.remove(video_file)
+        # Resize the frame to fixed dimensions.
+        resized_frame = cv2.resize(frame, (128, 128))
 
-            return sequence_result, highest_probability_class
-        
-        # Handle the case where the selected model couldn't be loaded or exercise_type is not found
-    return None, None
+        # Normalize the resized frame by dividing it by 255 so that each pixel value lies between 0 and 1.
+        normalized_frame = resized_frame / 255
 
+        # Append the pre-processed frame into the frames list.
+        frames_list.append(normalized_frame)
 
-def process_sequence(frames, model):
-    # Process the sequence of frames using the selected model
-    try:
-        # Preprocess the sequence if needed
-        preprocessed_sequence = preprocess_sequence(frames)
+    # Reshape frames_list to match the expected input shape
+    frames_list = np.reshape(frames_list, (1, 35, 128, 128, 3))
 
-        # Run the preprocessed sequence through the selected model
-        predictions = model.predict(np.array([preprocessed_sequence]))
+    # Load the model architecture and weights
+    model_config, model_weights = load_pretrained_model(model_path)
 
-        # Process the model's predictions and return the analysis result as well as the highest probability class
-        analysis_result, highest_probability_class = post_process_predictions(predictions)
+    if model_config is None or model_weights is None:
+        return {'error': 'Failed to load the model.'}
 
-        return analysis_result, highest_probability_class
+    # Create a new model with the same architecture
+    model = tf.keras.models.model_from_json(model_config)
+    model.set_weights(model_weights)
 
-    except Exception as e:
-        return f"Error during sequence processing: {str(e)}", None
+    # Passing the pre-processed frames to the regression model and get the predicted score.
+    predicted_score = model.predict(frames_list)
 
-def preprocess_sequence(frames):
-    # Preprocess the entire sequence of frames as needed
-    # You may need to apply operations like resizing, normalization, or any other preprocessing steps
-    # Ensure that the input shape matches your model's expectations
-    
-    preprocessed_frames = [preprocess_frame(frame) for frame in frames]
+    # Release the VideoCapture object.
+    video_reader.release()
 
-    # Combine the preprocessed frames to form the sequence
-    preprocessed_sequence = np.array(preprocessed_frames)
-
-    return preprocessed_sequence
-
-def preprocess_frame(frame):
-    # Preprocess an individual frame (e.g., resize, normalize, etc.) as per your model's requirements
-    # Example: Resize the frame to a specific size
-    resized_frame = cv2.resize(frame, (128, 128))
-    
-    # You may need to apply further preprocessing steps here, such as normalizing pixel values
-    
-    return resized_frame
-
-def post_process_predictions(predictions):
-    # Define class labels (replace with your actual class labels)
-    class_labels = ["Class 0", "Class 1", "Class 2", "Class 3", "Class 4"]
-
-    # Initialize variables to keep track of the highest probability class and its probability
-    highest_probability_class = None
-    highest_probability = -1  # Initialize with a very low value
-
-    # Initialize an empty list to store the formatted results
-    formatted_results = []
-
-    # Iterate through the predictions and format them
-    for i, pred in enumerate(predictions[0]):
-        class_label = class_labels[i]
-        probability = pred * 100  # Convert probability to percentage
-        formatted_result = f"{class_label}: {probability:.2f}%"
-        formatted_results.append(formatted_result)
-
-        # Check if the current class has a higher probability than the previous highest
-        if probability > highest_probability:
-            highest_probability = probability
-            highest_probability_class = class_label
-
-    # Join the formatted results into a single string
-    analysis_result = " ".join(formatted_results)
-
-    return analysis_result, highest_probability_class
+    return {'predicted_score': predicted_score.tolist()}  # Convert to JSON-serializable format
