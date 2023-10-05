@@ -28,7 +28,7 @@
     <div class="content">
 
         <!-- Start Content-->
-        <!--<div class="container-fluid">
+        <div class="container-fluid">
 
             <div class="row">
                 <div class="col-12">
@@ -61,16 +61,16 @@
             </div>
             <a href="{% url 'results_page' %}" class="btn btn-primary my-4" 
             id="viewResultsLink" style="display: none;"> Show Result </a>
-        </div> -->
+        </div>
         <!-- container -->
 
-        <h1>Upload and Process Video</h1>
+        <!-- <h1>Upload and Process Video</h1>
             <input type="file" id="videoInput" accept="video/*">
             <button id="uploadButton">Upload and Process</button>
             <div id="loader" style="display: none;">
                 <i class="fas fa-spinner fa-spin"></i> Processing...
             </div>
-            <a href="{% url 'results_page' %}" id="viewResultsLink" style="display: none;">View Results</a>
+            <a href="{% url 'results_page' %}" id="viewResultsLink" style="display: none;">View Results</a> -->
 
     </div>
     <!-- content -->
@@ -101,7 +101,7 @@
 
 {% block js %}
 
-    {% comment %} <script>
+    <script>
         document.addEventListener('DOMContentLoaded', function () {
             const videoElement = document.getElementById('video');
             const startRecordingButton = document.getElementById('startRecording');
@@ -156,6 +156,7 @@
                         .then(data => {
                             // Handle the analysis results
                             if ('result' in data) {
+                                console.log(data.result)
                                 // Hide the preloader
                                 loader.style.display = 'none';
                                 //resultsContainer.textContent = `Analysis Result: ${data.result}`;
@@ -213,9 +214,9 @@
         
         
 
-    </script> {% endcomment %}
+    </script>
 
-    <script>
+    {% comment %} <script>
         // Get references to HTML elements
         const videoInput = document.getElementById('videoInput');
         const uploadButton = document.getElementById('uploadButton');
@@ -263,7 +264,7 @@
                 });
             }
         });
-    </script>
+    </script> {% endcomment %}
 
 
 
