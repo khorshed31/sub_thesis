@@ -95,7 +95,7 @@ def upload_video(request):
         fs = FileSystemStorage(location='media/')
         custom_name = 'video.webm'
         filename = fs.save(custom_name, video)
-
+        
         #  # Ensure that the exercise_type is valid (i.e., it exists in your mapping)
         # if exercise_type not in exercise_to_model_mapping:
         #     return JsonResponse({'error': 'Invalid exercise type.'}, status=400)
@@ -108,11 +108,13 @@ def upload_video(request):
         media_root = settings.MEDIA_ROOT
         video_file_path = os.path.join(media_root, filename)
         if video_file_path:
-
+            print(video_file_path)
+            print(therapy_name)
             # Inside your upload_video function
             analysis_result = process_video(video_file_path, therapy_name)
 
-            
+            # Delete the video file after processing
+            os.remove(video_file_path)
 
             if 'error' in analysis_result:
                 return JsonResponse({'error': analysis_result['error']}, status=500)
@@ -138,23 +140,12 @@ def process_video(video_file, exercise_type):
     # Declare a list to store video frames we will extract.
     frames_list = []
 
-    # Get the number of frames in the video.
-    video_frames_count = int(video_reader.get(cv2.CAP_PROP_FRAME_COUNT))
-
-    # Calculate the interval after which frames will be added to the list.
-    skip_frames_window = max(int(video_frames_count / sequence_length), 1)
-
-    # Iterating through frames.
-    for frame_counter in range(sequence_length):
-
-        # Set the current frame position of the video.
-        video_reader.set(cv2.CAP_PROP_POS_FRAMES, frame_counter * skip_frames_window)
-
+    while True:
         # Read a frame.
         success, frame = video_reader.read()
 
-        # Check if the frame is not read properly, then break the loop.
-        if not success:
+        # Check if the frame is not read properly or we have enough frames.
+        if not success or len(frames_list) >= sequence_length:
             break
 
         # Resize the frame to fixed dimensions.
@@ -166,8 +157,16 @@ def process_video(video_file, exercise_type):
         # Append the pre-processed frame into the frames list.
         frames_list.append(normalized_frame)
 
-    # Reshape frames_list to match the expected input shape
-    frames_list = np.reshape(frames_list, (1, 35, 128, 128, 3))
+    # Close the VideoCapture object.
+    video_reader.release()
+
+    # Check if we have enough frames for processing.
+    if len(frames_list) < sequence_length:
+        return {'error': 'Insufficient frames in the video.'}
+
+    # Reshape the frames into the expected shape.
+    frames_array = np.array(frames_list)
+    frames_array = np.expand_dims(frames_array, axis=0)  # Add a batch dimension
 
     # Load the model architecture and weights
     model_config, model_weights = load_pretrained_model(model_path)
@@ -180,9 +179,9 @@ def process_video(video_file, exercise_type):
     model.set_weights(model_weights)
 
     # Passing the pre-processed frames to the regression model and get the predicted score.
-    predicted_score = model.predict(frames_list)
-
-    # Release the VideoCapture object.
-    video_reader.release()
+    predicted_score = model.predict(frames_array)
 
     return {'predicted_score': predicted_score.tolist()}  # Convert to JSON-serializable format
+
+
+    
