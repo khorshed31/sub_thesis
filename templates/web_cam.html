@@ -56,8 +56,8 @@
                 <video id="recordedVideo" controls></video>
                 </div>
             </div>
-            <div id="loader" style="display: none;">
-                <i class="fas fa-spinner fa-spin"></i> Processing...
+            <div id="fullPageLoader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 9999; display: none; justify-content: center; align-items: center;">
+                <img src="/static/assets/images/pre_loader.gif" alt="Loading..." style="width: 200px; height: 200px;">
             </div>
             <a href="{% url 'results_page' %}" class="btn btn-primary my-4" 
             id="viewResultsLink" style="display: none;"> Show Result </a>
@@ -111,7 +111,7 @@
         const timerElement = document.getElementById('timer');
         const therapy_name = `{{ therapy_name }}`
         const viewResultsLink = document.getElementById('viewResultsLink');
-        const loader = document.getElementById('loader');
+        const fullPageLoader = document.getElementById('fullPageLoader');
 
         const resultSection = document.getElementById('resultSection');
         const resultText = document.getElementById('resultText');
@@ -147,7 +147,8 @@
                     formData.append('therapy_name', therapy_name);
                     console.log(formData)
                     // Show the preloader
-                    loader.style.display = 'block'; // Show the preloader
+                    // Show the full-page loader while processing
+                    fullPageLoader.style.display = 'flex';
                     // Send the recorded video to the Django backend
                     fetch('upload_video', {
                         method: 'POST',
@@ -159,12 +160,12 @@
                         if ('result' in data) {
                             console.log(data.result)
                             // Hide the preloader
-                            loader.style.display = 'none';
+                            fullPageLoader.style.display = 'none';
                             //resultsContainer.textContent = `Analysis Result: ${data.result}`;
                             viewResultsLink.style.display = 'block';
                         } else if ('error' in data) {
                             console.log(data.error)
-                            loader.style.display = 'none';
+                            fullPageLoader.style.display = 'none';
                             resultsContainer.textContent = `Error: ${data.error}`;
                         }
                     })

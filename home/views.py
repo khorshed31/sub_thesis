@@ -12,6 +12,7 @@ from django.core.files.storage import FileSystemStorage
 import logging
 from django.conf import settings
 from django.contrib import messages
+from .forms import ReportForm
 
 # Create your views here.
 def home(request):
@@ -184,4 +185,16 @@ def process_video(video_file, exercise_type):
     return {'predicted_score': predicted_score.tolist()}  # Convert to JSON-serializable format
 
 
+# @csrf_exempt   
+# def create_report(request):
+#     message = None  # Initialize a variable to store the success message
+
+#     if request.method == 'POST':
+#         form = ReportForm(request.POST)
+#         if form.is_valid():
+#             form.save()  # Save the form data to the database
+#             message = "Report saved successfully"  # Set the success message
+#     else:
+#         form = ReportForm()
     
+#     return JsonResponse({'message': message})    

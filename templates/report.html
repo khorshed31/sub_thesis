@@ -51,6 +51,15 @@
                 <i>Date: <span id="currentDate"></span></i>
               </div>
               <button onclick="goBack()">Go Back</button>
+              
+              <!-- <form id="myForm">
+                  <input type="hidden" value="{{ therapy_name }}" name="therapy_name">
+                  <input type="hidden" value="{{ user_info.id}}" name="user_id">
+                  <input type="hidden" value="{{ user_info.first_name }} {{ user_info.last_name }}" name="user_name">
+                  <input type="hidden" value="{{ analysis_result }}" name="result">
+                  <input type="hidden" value="" id="dateInput" name="date">
+                  <button type="submit">Save</button>
+              </form> -->
             </div>
 
         </div>
@@ -70,11 +79,61 @@
 <script>
   var currentDate = new Date().toLocaleDateString('en-GB');
   document.getElementById('currentDate').textContent = currentDate;
+  // Find the input field by its ID
+  var dateInput = document.getElementById('dateInput');
+
+  // Set the value of the input field to the current date
+  dateInput.value = currentDate;
 
   function goBack() {
     window.history.back();
 }
 </script>
+
+{% comment %} <script>
+  // Find the form element by its ID
+  var myForm = document.getElementById('myForm');
+
+  // Add a submit event listener to the form
+  myForm.addEventListener('submit', function(event) {
+      event.preventDefault(); // Prevent the default form submission
+
+      // Collect form data
+      var formData = new FormData(myForm);
+
+      // Convert the FormData object to a JSON object (optional)
+      var formDataJSON = {};
+      formData.forEach(function(value, key) {
+          formDataJSON[key] = value;
+      });
+
+      // Display the collected data (optional)
+      console.log(formDataJSON);
+
+      // Send the data to your server using an XMLHttpRequest or fetch
+      // Example using fetch (adjust the URL and method accordingly):
+      fetch('/home/create_report', {
+          method: 'POST',
+          body: formData
+      })
+      .then(response => {
+          // Handle the response from the server
+          if (response.ok) {
+              // Data saved successfully
+              console.log('Data saved successfully');
+              // You can redirect the user or display a success message here
+          } else {
+              // Data save failed
+              console.error('Data save failed');
+              // Handle the error or display an error message
+          }
+      })
+      .catch(error => {
+          console.error('Error:', error);
+          // Handle the network error
+      });
+  });
+</script> {% endcomment %}
 
 {% endblock %}
 

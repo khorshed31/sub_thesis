@@ -8,6 +8,7 @@ urlpatterns = [
     path('web_cam', views.web_cam, name="web_cam"),
     path('upload_video', views.upload_video, name="upload_video"),
     path('results_page/', views.results_page, name='results_page'),
+    # path('create_report/', views.create_report, name='create_report'),
 ]
 
 # if settings.DEBUG:
