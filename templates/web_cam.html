@@ -4,8 +4,8 @@
 
     <style>
         video{
-        max-width: 90%;
-        width: 80%;
+        max-width: 100%;
+        width: 95%;
         max-height: 100%;
         height: auto;
         border: 2px solid #39afd1;
@@ -31,33 +31,47 @@
         <div class="container-fluid">
 
             <div class="row">
-                <div class="col-12">
-                    <div class="page-title-box">
-                        <h4 class="page-title">Web Cam</h4>
-                        <div class="bg-primary p-2 text-white bg-opacity-75"><strong>{{ therapy_name }}</strong></div>
+                <div class="page-title-box">
+                    <h4 class="page-title">Web Cam</h4>
+                    <div class="d-flex justify-content-between bg-success p-2 text-white rounded">
+
+                        <div class="col-md-6 fs-2">
+                            <strong>{{ therapy_name }}</strong>
+                        </div>
+                        <div class="col-md-2">
+                            <a href="/report" class="btn btn-primary"> Show Result </a>
+                        </div>
                     </div>
                 </div>
             </div>
             
             <div class="row">
                 <div class="container">
-                    <div id="timer" class="d-flex justify-content-center">
-                        <span class="widthheight my-4 badge bg-success bg-opacity-75  fs-1  rounded-circle">00:00</span>
+                    <div class="d-flex justify-content-between align-items-center my-4">
+                        <div id="timer" class="col-md-3">
+                            <span class="btn btn-primary badge bg-success  fs-3  rounded w-100">00:00</span>
+                    
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-success w-100" id="startRecording">Start Recording</button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-danger w-100" id="stopRecording" disabled>Stop Recording</button>
+                        </div>
                     </div>
-                    <div class="d-flex justify-content-center"><video id="video" autoplay playsinline></video></div>
-                    <div class="d-flex justify-content-center p-3">
-                    <button class="btn btn-success me-2" id="startRecording">Start Recording</button>
-                    <button class="btn btn-danger" id="stopRecording" disabled>Stop Recording</button>
+
+                    <div class="d-flex justify-content-around">
+                        <div class="col-12 col-md-6 ">
+                            <video id="video" autoplay playsinline></video>
+                            <input id="recordDuration" type="hidden" value="{{ time }}">
+                        </div>
+                
+                        <div class="col-12 col-md-6 ">
+                            <video id="recordedVideo" controls></video>
+                        </div>
                     </div>
-                    <input id="recordDuration" type="hidden" value="{{ time }}">
                 </div>
-                <hr>
-                <div class="d-flex justify-content-center">
-                <video id="recordedVideo" controls></video>
-                </div>
-            </div>
-            <div class="d-flex justify-content-center">
-                <a href="/report" class="btn btn-primary my-4"> Show Result </a>
+            
             </div>
         </div>
         <!-- container -->
@@ -100,7 +114,7 @@
             function updateTimer() {
                 const minutes = Math.floor(remainingTime / 60000);
                 const seconds = ((remainingTime % 60000) / 1000).toFixed(0);
-                timerElement.innerHTML = `<span class="widthheight my-4 badge bg-success bg-opacity-75  fs-1  rounded-circle">${minutes}:${(seconds < 10 ? '0' : '')}${seconds}</span>`;
+                timerElement.innerHTML = `<span class="btn btn-primary badge bg-success  fs-3  rounded">${minutes}:${(seconds < 10 ? '0' : '')}${seconds}</span>`;
             }
         
             async function startRecording() {
