@@ -12,7 +12,7 @@ from django.core.files.storage import FileSystemStorage
 import logging
 from django.conf import settings
 from django.contrib import messages
-from .forms import ReportForm
+from .models import Report 
 
 # Create your views here.
 def home(request):
@@ -184,17 +184,30 @@ def process_video(video_file, exercise_type):
 
     return {'predicted_score': predicted_score.tolist()}  # Convert to JSON-serializable format
 
+@csrf_exempt
+def save_form_data(request):
+    if request.method == 'POST':
+        therapy_name = request.POST.get('therapy_name', '')
+        user_id = request.POST.get('user_id', '')
+        user_name = request.POST.get('user_name', '')
+        result = request.POST.get('result', '')
+        date = request.POST.get('date', '')
 
-# @csrf_exempt   
-# def create_report(request):
-#     message = None  # Initialize a variable to store the success message
+        # Create an instance of the Report model and save it to the database
+        report_instance = Report(
+            therapy_name=therapy_name,
+            user_id=user_id,
+            user_name=user_name,
+            result=result,
+            date=date
+        )
+        report_instance.save()
 
-#     if request.method == 'POST':
-#         form = ReportForm(request.POST)
-#         if form.is_valid():
-#             form.save()  # Save the form data to the database
-#             message = "Report saved successfully"  # Set the success message
-#     else:
-#         form = ReportForm()
+        return JsonResponse({'message': 'Data saved successfully'})
+    else:
+        return JsonResponse({'message': 'Invalid request method'}) 
     
-#     return JsonResponse({'message': message})    
+
+def my_reports(request):
+    user_data = Report.objects.filter(user_id=request.user.id)
+    return render(request, 'my_reports.html', {'user_data': user_data})  

@@ -1,0 +1,81 @@
+
+{% extends 'base.html' %}
+
+{% block css %}
+
+ <!-- Datatables css -->
+ <link href="/static/assets/vendor/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet" type="text/css" />
+ <link href="/static/assets/vendor/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css" rel="stylesheet" type="text/css" />
+
+
+{% endblock %}
+
+{% block content %}
+
+<div class="content-page">
+    <div class="content">
+
+        <!-- Start Content-->
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box">                                    
+                        <h4 class="page-title">My Reports</h4>
+                    </div>
+                </div>
+            </div>
+            
+            <table id="basic-datatable" class="table dt-responsive nowrap w-100">
+                <thead>
+                    <tr>
+                        <th>SL No</th>
+                        <th>Therapy Name</th>
+                        <th>User Name</th>
+                        <th>Result</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for data in user_data %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td> 
+                        <td>{{ data.therapy_name }}</td>
+                        <td>{{ data.user_name }}</td>
+                        <td>{{ data.result }}</td>
+                        <td>{{ data.date }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5">No data available.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+        <!-- container -->
+
+    </div>
+    <!-- content -->
+
+    {% include "footer/js_file.html" %}
+
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+ <!-- Datatables js -->
+ <script src="/static/assets/vendor/datatables.net/js/jquery.dataTables.min.js"></script>
+ <script src="/static/assets/vendor/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
+ <script src="/static/assets/vendor/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+ <script src="/static/assets/vendor/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js"></script>
+ 
+ <!-- Datatable Init js -->
+ <script src="/static/assets/js/pages/demo.datatable-init.js"></script>
+
+{% endblock %}
+
+

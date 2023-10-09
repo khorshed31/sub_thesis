@@ -2,23 +2,55 @@
 
 {% block css %}
 
-<style>
-    video{
-    max-width: 90%;
-    width: 80%;
-    max-height: 100%;
-    height: auto;
-    border: 2px solid #39afd1;
-    border-radius: 10px;
-    }
-    .widthheight{
-        width: 100px;
-        height: 100px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-</style>
+    <style>
+        video{
+        max-width: 100%;
+        width: 95%;
+        max-height: 100%;
+        height: auto;
+        border: 2px solid #39afd1;
+        border-radius: 10px;
+        }
+        .widthheight{
+            width: 100px;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Progress container */
+        .progress-container {
+        width: 100%;
+        max-width: 400px; /* Adjust the maximum width as needed */
+        height: 30px;
+        background-color: #f3f3f3; /* Background color of the container */
+        border-radius: 30px; /* Border radius to create a rounded appearance */
+        overflow: hidden;
+        margin: 20px auto; /* Center the progress bar horizontally */
+        }
+
+        /* Progress bar */
+        .progress-bar {
+        width: 0;
+        height: 100%;
+        background-color: #007bff; /* Progress bar color */
+        border-radius: 30px; /* Border radius to match the container */
+        transition: width 1s ease-in-out; /* Animation duration and easing */
+        position: relative;
+        }
+
+        /* Progress label */
+        .progress-label {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white; /* Text color */
+        font-weight: bold; /* Font weight for the percentage label */
+        }
+        
+            </style>
 
 {% endblock %}
 
@@ -28,39 +60,61 @@
     <div class="content">
 
         <!-- Start Content-->
-        <div class="container-fluid">
+       <div class="container-fluid">
 
             <div class="row">
-                <div class="col-12">
-                    <div class="page-title-box">
-                        <h4 class="page-title">Web Cam</h4>
-                        <div class="bg-primary p-2 text-white bg-opacity-75"><strong>{{ therapy_name }}</strong></div>
+                <div class="page-title-box">
+                    <h4 class="page-title">Web Cam</h4>
+                    <div class="d-flex justify-content-between bg-success p-2 text-white rounded">
+
+                        <div class="col-md-6 fs-2">
+                            <strong>{{ therapy_name }}</strong>
+                        </div>
+                        <div class="col-md-2">
+                            <div id="loader" style="display: none;">
+                                <img src="/static/assets/images/pre_loader2.gif" alt="Loading..." style="width: 50px; height: 50px;">
+                                <div class="progress-container">
+                                    <div class="progress-bar" id="progressBar">
+                                      <div class="progress-label" id="progressLabel">0%</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{% url 'results_page' %}" class="btn btn-primary my-1" 
+                                id="viewResultsLink" style="display: none;"> Show Result </a>
+                        </div>
                     </div>
                 </div>
             </div>
             
             <div class="row">
                 <div class="container">
-                    <div id="timer" class="d-flex justify-content-center">
-                        <span class="widthheight my-4 badge bg-success bg-opacity-75  fs-1  rounded-circle">00:00</span>
+                    <div class="d-flex justify-content-between align-items-center my-4">
+                        <div id="timer" class="col-md-3">
+                            <span class="btn btn-primary badge bg-success  fs-3  rounded w-100">00:00</span>
+                    
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-success w-100" id="startRecording">Start Recording</button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-danger w-100" id="stopRecording" disabled>Stop Recording</button>
+                        </div>
                     </div>
-                    <div class="d-flex justify-content-center"><video id="video" autoplay playsinline></video></div>
-                    <div class="d-flex justify-content-center p-3">
-                    <button class="btn btn-success me-2" id="startRecording">Start Recording</button>
-                    <button class="btn btn-danger" id="stopRecording" disabled>Stop Recording</button>
+
+                    <div class="d-flex justify-content-around">
+                        <div class="col-12 col-md-6 ">
+                            <video id="video" autoplay playsinline></video>
+                            <input id="recordDuration" type="hidden" value="{{ time }}">
+                        </div>
+                
+                        <div class="col-12 col-md-6 ">
+                            <video id="recordedVideo" controls></video>
+                        </div>
                     </div>
-                    <input id="recordDuration" type="hidden" value="{{ time }}">
                 </div>
-                <hr>
-                <div class="d-flex justify-content-center">
-                <video id="recordedVideo" controls></video>
-                </div>
+            
             </div>
-            <div id="fullPageLoader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 9999; display: none; justify-content: center; align-items: center;">
-                <img src="/static/assets/images/pre_loader.gif" alt="Loading..." style="width: 200px; height: 200px;">
-            </div>
-            <a href="{% url 'results_page' %}" class="btn btn-primary my-4" 
-            id="viewResultsLink" style="display: none;"> Show Result </a>
+            
         </div>
         <!-- container -->
 
@@ -91,12 +145,6 @@
 
 </div>
 
-
-
-
-
-
-
 {% endblock %}
 
 {% block js %}
@@ -111,10 +159,12 @@
         const timerElement = document.getElementById('timer');
         const therapy_name = `{{ therapy_name }}`
         const viewResultsLink = document.getElementById('viewResultsLink');
-        const fullPageLoader = document.getElementById('fullPageLoader');
+        const loader = document.getElementById('loader');
 
         const resultSection = document.getElementById('resultSection');
         const resultText = document.getElementById('resultText');
+        const progressBar = document.getElementById('progressBar');
+        const progressLabel = document.getElementById('progressLabel');
 
         let mediaRecorder;
         let recordedChunks = [];
@@ -123,7 +173,7 @@
         function updateTimer() {
             const minutes = Math.floor(remainingTime / 60000);
             const seconds = ((remainingTime % 60000) / 1000).toFixed(0);
-            timerElement.innerHTML = `<span class="badge bg-success rounded-pill">${minutes}:${(seconds < 10 ? '0' : '')}${seconds}</span>`;
+            timerElement.innerHTML = `<span class="btn btn-primary badge bg-success  fs-3  rounded w-100">${minutes}:${(seconds < 10 ? '0' : '')}${seconds}</span>`;
         }
 
 
@@ -148,7 +198,14 @@
                     console.log(formData)
                     // Show the preloader
                     // Show the full-page loader while processing
-                    fullPageLoader.style.display = 'flex';
+                    loader.style.display = 'flex';
+
+                    // Start the progress bar animation
+                    simulateVideoProcessing(); // Start the progress bar animation
+
+                    // Start the progress bar animation
+                    //progressBar.classList.add('loading');
+                    
                     // Send the recorded video to the Django backend
                     fetch('upload_video', {
                         method: 'POST',
@@ -158,14 +215,17 @@
                     .then(data => {
                         // Handle the analysis results
                         if ('result' in data) {
+
+                            // Handle the analysis results using the handleBackendResponse function
+                            handleBackendResponse(data);
                             console.log(data.result)
                             // Hide the preloader
-                            fullPageLoader.style.display = 'none';
+                            loader.style.display = 'none';
                             //resultsContainer.textContent = `Analysis Result: ${data.result}`;
                             viewResultsLink.style.display = 'block';
                         } else if ('error' in data) {
                             console.log(data.error)
-                            fullPageLoader.style.display = 'none';
+                            loader.style.display = 'none';
                             resultsContainer.textContent = `Error: ${data.error}`;
                         }
                     })
@@ -200,6 +260,53 @@
                 console.error('Error accessing webcam:', error);
             }
         }
+
+
+        // Handle the backend response and update the progress bar
+        function handleBackendResponse(response) {
+            if ('result' in response) {
+                console.log(response.result);
+                // Update the progress bar to 100% when the result is received
+                updateProgressBar(100);
+
+                // Hide the preloader
+                loader.style.display = 'none';
+
+                // Show the view results button
+                viewResultsLink.style.display = 'block';
+            } else if ('error' in response) {
+                console.log(response.error);
+                loader.style.display = 'none';
+                resultsContainer.textContent = `Error: ${response.error}`;
+            }
+        }
+
+        // Update the progress bar width and label
+        function updateProgressBar(percentage) {
+            const progressBar = document.querySelector('.progress-bar');
+            const progressLabel = document.querySelector('.progress-label');
+
+            progressBar.style.width = `${percentage}%`;
+            progressLabel.textContent = `${percentage}%`;
+        }
+
+        // Simulate video processing (you will replace this with your actual video processing logic)
+        function simulateVideoProcessing() {
+            let percentage = 0;
+            const processingInterval = setInterval(() => {
+                percentage += 5; // Adjust the increment value as needed
+                if (percentage <= 100) {
+                    updateProgressBar(percentage);
+                } else {
+                    clearInterval(processingInterval);
+                    // Simulate the backend response (you will replace this with your actual fetch call)
+                    setTimeout(() => {
+                        const data = { result: 'Video processing completed!' }; // Replace with your response data
+                        handleBackendResponse(data);
+                    }, 1000); // Simulate a delay before receiving the backend response
+                }
+            }, 1000); // Adjust the interval for smoother or faster animation
+        }
     
         function stopRecording() {
             if (mediaRecorder && mediaRecorder.state !== 'inactive') {
@@ -207,7 +314,8 @@
                 startRecordingButton.disabled = false;
                 stopRecordingButton.disabled = true;
                 clearInterval(recordingTimer);
-                timerElement.textContent = '00:00'; // Reset the timer
+                timerElement.innerHTML = `<span class="btn btn-primary badge bg-success  fs-3  rounded w-100">00:00</span>`;
+                //timerElement.textContent = '00:00'; // Reset the timer
             }
         }
     
@@ -219,62 +327,54 @@
 
 </script>
 
-    {% comment %} <script>
-        // Get references to HTML elements
-        const videoInput = document.getElementById('videoInput');
-        const uploadButton = document.getElementById('uploadButton');
-        const recordedVideoElement = document.getElementById('recordedVideo');
-        const predictionsList = document.getElementById('predictionsList');
-        const resultsContainer = document.getElementById('analysis-results');
-        const therapy_name = `{{ therapy_name }}`
-        const viewResultsLink = document.getElementById('viewResultsLink');
-        const loader = document.getElementById('loader');
+{% comment %} <script>
+    // Get references to HTML elements
+    const videoInput = document.getElementById('videoInput');
+    const uploadButton = document.getElementById('uploadButton');
+    const recordedVideoElement = document.getElementById('recordedVideo');
+    const predictionsList = document.getElementById('predictionsList');
+    const resultsContainer = document.getElementById('analysis-results');
+    const therapy_name = `{{ therapy_name }}`
+    const viewResultsLink = document.getElementById('viewResultsLink');
+    const loader = document.getElementById('loader');
 
-        // Event listener for the Upload and Process button
-        uploadButton.addEventListener('click', () => {
-            const uploadedFile = videoInput.files[0];
-            
-            if (uploadedFile) {
-                const formData = new FormData();
-                formData.append('video', uploadedFile);
-                formData.append('therapy_name', therapy_name);
+    // Event listener for the Upload and Process button
+    uploadButton.addEventListener('click', () => {
+        const uploadedFile = videoInput.files[0];
+        
+        if (uploadedFile) {
+            const formData = new FormData();
+            formData.append('video', uploadedFile);
+            formData.append('therapy_name', therapy_name);
 
-                // Show the preloader
-                loader.style.display = 'block'; // Show the preloader
-                //console.log(therapy_name)
-                // Send the uploaded video to the backend for processing
-                fetch('upload_video', {
-                    method: 'POST',
-                    body: formData,
-                })
-                .then(response => response.json())
-                .then(data => {
-                    // Handle the analysis results
-                    if ('result' in data) {
-                        console.log(data.result)
-                        // Hide the preloader
-                        loader.style.display = 'none';
-                        //resultsContainer.textContent = `Analysis Result: ${data.result}`;
-                        viewResultsLink.style.display = 'block';
-                    } else if ('error' in data) {
-                        loader.style.display = 'none';
-                        resultsContainer.textContent = `Error: ${data.error}`;
-                    }
-                })
-                .catch(error => {
+            // Show the preloader
+            loader.style.display = 'block'; // Show the preloader
+            //console.log(therapy_name)
+            // Send the uploaded video to the backend for processing
+            fetch('upload_video', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Handle the analysis results
+                if ('result' in data) {
+                    console.log(data.result)
+                    // Hide the preloader
                     loader.style.display = 'none';
-                    console.log(error);
-                });
-            }
-        });
-    </script> {% endcomment %}
-
-
-
-
-
-
-
+                    //resultsContainer.textContent = `Analysis Result: ${data.result}`;
+                    viewResultsLink.style.display = 'block';
+                } else if ('error' in data) {
+                    loader.style.display = 'none';
+                    resultsContainer.textContent = `Error: ${data.error}`;
+                }
+            })
+            .catch(error => {
+                loader.style.display = 'none';
+                console.log(error);
+            });
+        }
+    });
+</script> {% endcomment %}
 
 {% endblock %}
-
