@@ -5,9 +5,9 @@
     <style>
         video{
         max-width: 100%;
-        width: 95%;
+        width: 100%;
         max-height: 100%;
-        height: auto;
+        height: 100%;
         border: 2px solid #39afd1;
         border-radius: 10px;
         }
@@ -33,12 +33,12 @@
             <div class="row">
                 <div class="page-title-box">
                     <h4 class="page-title">Web Cam</h4>
-                    <div class="d-flex justify-content-between bg-success p-2 text-white rounded">
+                    <div class="d-flex justify-content-between bg-success p-2 text-white fst-italic rounded">
 
                         <div class="col-md-6 fs-2">
                             <strong>{{ therapy_name }}</strong>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-2 d-flex justify-content-end align-items-center">
                             <a href="/report" class="btn btn-primary"> Show Result </a>
                         </div>
                     </div>
@@ -47,26 +47,32 @@
             
             <div class="row">
                 <div class="container">
-                    <div class="d-flex justify-content-between align-items-center my-4">
-                        <div id="timer" class="col-md-3">
-                            <span class="btn btn-primary badge bg-success  fs-3  rounded w-100">00:00</span>
+                    <div class="flex-column flex-md-row d-flex justify-content-between align-items-center my-3">
+                        <div id="timer" class="col-6 col-sm-3">
+                            <span class="btn btn-primary fs-4 fw-bolder rounded w-100">00:00</span>
                     
                         </div>
-                        <div class="col-md-3">
-                            <button class="btn btn-success w-100" id="startRecording">Start Recording</button>
+                    <div class="d-flex justify-content-between align-items-center  mt-3 mt-md-0 mb-0 col-12 col-md-8">
+
+                        <!-- Start button-->
+                        <div class="col-5">
+                            <button class="btn btn-success fs-4 fw-bolder  w-100" id="startRecording">Start Recording</button>
                         </div>
-                        <div class="col-md-3">
-                            <button class="btn btn-danger w-100" id="stopRecording" disabled>Stop Recording</button>
+                        <!-- end button-->
+                        <div class="col-5">
+                            <button class="btn btn-danger fs-4 fw-bolder  w-100" id="stopRecording" disabled>Stop Recording</button>
                         </div>
+                        </div>
+
                     </div>
 
-                    <div class="d-flex justify-content-around">
-                        <div class="col-12 col-md-6 ">
+                    <div class="flex-column flex-md-row d-flex justify-content-around">
+                        <div class="col-12 col-md-6  p-1">
                             <video id="video" autoplay playsinline></video>
                             <input id="recordDuration" type="hidden" value="{{ time }}">
                         </div>
                 
-                        <div class="col-12 col-md-6 ">
+                        <div class="col-12 col-md-6  p-1">
                             <video id="recordedVideo" controls></video>
                         </div>
                     </div>
@@ -114,7 +120,7 @@
             function updateTimer() {
                 const minutes = Math.floor(remainingTime / 60000);
                 const seconds = ((remainingTime % 60000) / 1000).toFixed(0);
-                timerElement.innerHTML = `<span class="btn btn-primary badge bg-success  fs-3  rounded">${minutes}:${(seconds < 10 ? '0' : '')}${seconds}</span>`;
+                timerElement.innerHTML = `<span class="btn btn-primary fs-4 fw-bolder rounded w-100">${minutes}:${(seconds < 10 ? '0' : '')}${seconds}</span>`;
             }
         
             async function startRecording() {
@@ -163,7 +169,7 @@
                     startRecordingButton.disabled = false;
                     stopRecordingButton.disabled = true;
                     clearInterval(recordingTimer);
-                    timerElement.textContent = '00:00'; // Reset the timer
+                    timerElement.innerHTML = `<span class="btn btn-primary fs-4 fw-bolder rounded w-100">00:00</span>`; // Reset the timer
                 }
             }
         
